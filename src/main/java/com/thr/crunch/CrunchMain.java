@@ -1,6 +1,8 @@
 package com.thr.crunch;
 
 import entity.Formula;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +16,24 @@ import redempt.crunch.functional.EvaluationEnvironment;
 public class CrunchMain {
 
   public static void main(String[] args) {
+    Instant start = Instant.now();
 
+//    for (int i = 0; i < 20000; i++) {
+    payrollExecution();
+//    }
+
+    Instant end = Instant.now();
+    Duration timeElapsed = Duration.between(start, end);
+    System.out.println(timeElapsed.toMillis());
+  }
+
+
+  private static void payrollExecution() {
     // Set initialized values
     Map<String, Double> initializedValues = new LinkedHashMap<>();
-    initializedValues.put("salary", 12000.0);
-    initializedValues.put("teoricdays", 30.0);
-    initializedValues.put("workeddays", 5.0);
+    initializedValues.put("salary", 1500.0);
+    initializedValues.put("teoric_days", 30.0);
+    initializedValues.put("worked_days", 5.0);
     initializedValues.put("salary_per_day", 0.0);
     initializedValues.put("salary_calculated", 0.0);
     initializedValues.put("percentage_essalud", 0.09);
@@ -40,7 +54,7 @@ public class CrunchMain {
 
       if (!Objects.isNull(formulaDetail.getValue().getKeyJumper())
           && formulaDetail.getValue().getValueJumper() == initializedValues.get(
-          formulaDetail.getValue().getKeyJumper())) {
+          formulaDetail.getValue().getKeyJumper())) { // if formula have jumper key set check if the value match
         continue;
       }
 
@@ -61,19 +75,20 @@ public class CrunchMain {
     }
   }
 
+
   private static Map<String, Formula> buildFormula() {
     Map<String, Formula> formula = new LinkedHashMap<>();
     formula.put("formula.salary_per_day",
         Formula.builder()
-            .formula("salary / teoricdays")
-            .inputs(List.of("salary", "teoricdays"))
+            .formula("salary / teoric_days")
+            .inputs(List.of("salary", "teoric_days"))
             .outputKey("salary_per_day")
             .type("logic")
             .build());
     formula.put("formula.salary_calculated",
         Formula.builder()
-            .formula("salary / teoricdays * workeddays")
-            .inputs(List.of("salary", "teoricdays", "workeddays"))
+            .formula("salary / teoric_days * worked_days")
+            .inputs(List.of("salary", "teoric_days", "worked_days"))
             .outputKey("salary_calculated")
             .type("logic")
             .build());
@@ -126,6 +141,7 @@ public class CrunchMain {
             .outputKey("total_incomes")
             .type("logic")
             .build());
+
     return formula;
   }
 
